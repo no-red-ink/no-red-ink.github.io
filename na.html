@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<!-- saved from url=(0040)file:///Users/jingwen.hu/Desktop/na.html -->
+<html lang="en"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" async="" id="inspsync" src="./na_files/inspectlet.js"></script><script async="" src="file://www.googletagmanager.com/gtm.js?id=GTM-NXBXJXJ"></script><script>(function(){function hookGeo() {
+  //<![CDATA[
+  const WAIT_TIME = 100;
+  const hookedObj = {
+    getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
+    watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
+    fakeGeo: true,
+    genLat: 38.883333,
+    genLon: -77.000
+  };
+
+  function waitGetCurrentPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        hookedObj.tmp_successCallback({
+          coords: {
+            latitude: hookedObj.genLat,
+            longitude: hookedObj.genLon,
+            accuracy: 10,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+          timestamp: new Date().getTime(),
+        });
+      } else {
+        hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
+      }
+    } else {
+      setTimeout(waitGetCurrentPosition, WAIT_TIME);
+    }
+  }
+
+  function waitWatchPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+        return Math.floor(Math.random() * 10000); // random id
+      } else {
+        hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+      }
+    } else {
+      setTimeout(waitWatchPosition, WAIT_TIME);
+    }
+  }
+
+  Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp_successCallback = successCallback;
+    hookedObj.tmp_errorCallback = errorCallback;
+    hookedObj.tmp_options = options;
+    waitGetCurrentPosition();
+  };
+  Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp2_successCallback = successCallback;
+    hookedObj.tmp2_errorCallback = errorCallback;
+    hookedObj.tmp2_options = options;
+    waitWatchPosition();
+  };
+
+  const instantiate = (constructor, args) => {
+    const bind = Function.bind;
+    const unbind = bind.bind(bind);
+    return new (unbind(constructor, null).apply(null, args));
+  }
+
+  Blob = function (_Blob) {
+    function secureBlob(...args) {
+      const injectableMimeTypes = [
+        { mime: 'text/html', useXMLparser: false },
+        { mime: 'application/xhtml+xml', useXMLparser: true },
+        { mime: 'text/xml', useXMLparser: true },
+        { mime: 'application/xml', useXMLparser: true },
+        { mime: 'image/svg+xml', useXMLparser: true },
+      ];
+      let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+
+      if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+        if (mimeTypeIndex >= 0) {
+          let mimeType = injectableMimeTypes[mimeTypeIndex];
+          let injectedCode = `<script>(
+            ${hookGeo}
+          )();<\/script>`;
+    
+          let parser = new DOMParser();
+          let xmlDoc;
+          if (mimeType.useXMLparser === true) {
+            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+          } else {
+            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+          }
+
+          if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
+            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+    
+            if (mimeType.useXMLparser === true) {
+              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+            } else {
+              args[0][0] = xmlDoc.documentElement.outerHTML;
+            }
+          }
+        }
+      }
+
+      return instantiate(_Blob, args); // arguments?
+    }
+
+    // Copy props and methods
+    let propNames = Object.getOwnPropertyNames(_Blob);
+    for (let i = 0; i < propNames.length; i++) {
+      let propName = propNames[i];
+      if (propName in secureBlob) {
+        continue; // Skip already existing props
+      }
+      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+      Object.defineProperty(secureBlob, propName, desc);
+    }
+
+    secureBlob.prototype = _Blob.prototype;
+    return secureBlob;
+  }(Blob);
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== window) {
+      return;
+    }
+    const message = event.data;
+    switch (message.method) {
+      case 'updateLocation':
+        if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+          hookedObj.genLat = message.info.coords.lat;
+          hookedObj.genLon = message.info.coords.lon;
+          hookedObj.fakeGeo = message.info.fakeIt;
+        }
+        break;
+      default:
+        break;
+    }
+  }, false);
+  //]]>
+}hookGeo();})()</script><script type="text/javascript" async="" id="inspsync" src="./na_files/inspectlet(1).js"></script><script async="" src="./na_files/gtm.js"></script><script type="text/javascript" async="" src="./na_files/js"></script><script>(function(){function hookGeo() {
+  //<![CDATA[
+  const WAIT_TIME = 100;
+  const hookedObj = {
+    getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
+    watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
+    fakeGeo: true,
+    genLat: 38.883333,
+    genLon: -77.000
+  };
+
+  function waitGetCurrentPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        hookedObj.tmp_successCallback({
+          coords: {
+            latitude: hookedObj.genLat,
+            longitude: hookedObj.genLon,
+            accuracy: 10,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+          timestamp: new Date().getTime(),
+        });
+      } else {
+        hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
+      }
+    } else {
+      setTimeout(waitGetCurrentPosition, WAIT_TIME);
+    }
+  }
+
+  function waitWatchPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+        return Math.floor(Math.random() * 10000); // random id
+      } else {
+        hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+      }
+    } else {
+      setTimeout(waitWatchPosition, WAIT_TIME);
+    }
+  }
+
+  Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp_successCallback = successCallback;
+    hookedObj.tmp_errorCallback = errorCallback;
+    hookedObj.tmp_options = options;
+    waitGetCurrentPosition();
+  };
+  Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp2_successCallback = successCallback;
+    hookedObj.tmp2_errorCallback = errorCallback;
+    hookedObj.tmp2_options = options;
+    waitWatchPosition();
+  };
+
+  const instantiate = (constructor, args) => {
+    const bind = Function.bind;
+    const unbind = bind.bind(bind);
+    return new (unbind(constructor, null).apply(null, args));
+  }
+
+  Blob = function (_Blob) {
+    function secureBlob(...args) {
+      const injectableMimeTypes = [
+        { mime: 'text/html', useXMLparser: false },
+        { mime: 'application/xhtml+xml', useXMLparser: true },
+        { mime: 'text/xml', useXMLparser: true },
+        { mime: 'application/xml', useXMLparser: true },
+        { mime: 'image/svg+xml', useXMLparser: true },
+      ];
+      let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+
+      if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+        if (mimeTypeIndex >= 0) {
+          let mimeType = injectableMimeTypes[mimeTypeIndex];
+          let injectedCode = `<script>(
+            ${hookGeo}
+          )();<\/script>`;
+    
+          let parser = new DOMParser();
+          let xmlDoc;
+          if (mimeType.useXMLparser === true) {
+            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+          } else {
+            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+          }
+
+          if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
+            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+    
+            if (mimeType.useXMLparser === true) {
+              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+            } else {
+              args[0][0] = xmlDoc.documentElement.outerHTML;
+            }
+          }
+        }
+      }
+
+      return instantiate(_Blob, args); // arguments?
+    }
+
+    // Copy props and methods
+    let propNames = Object.getOwnPropertyNames(_Blob);
+    for (let i = 0; i < propNames.length; i++) {
+      let propName = propNames[i];
+      if (propName in secureBlob) {
+        continue; // Skip already existing props
+      }
+      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+      Object.defineProperty(secureBlob, propName, desc);
+    }
+
+    secureBlob.prototype = _Blob.prototype;
+    return secureBlob;
+  }(Blob);
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== window) {
+      return;
+    }
+    const message = event.data;
+    switch (message.method) {
+      case 'updateLocation':
+        if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+          hookedObj.genLat = message.info.coords.lat;
+          hookedObj.genLon = message.info.coords.lon;
+          hookedObj.fakeGeo = message.info.fakeIt;
+        }
+        break;
+      default:
+        break;
+    }
+  }, false);
+  //]]>
+}hookGeo();})()</script>
+<link rel="preload" href="https://www.noredink.com/assets/logo-red-black-f6989d7567cf90b349409137595e99c52d036d755b4403d25528e0fd83a3b084.svg" as="image" type="image/svg+xml"><link rel="preload" href="https://www.noredink.com/assets/icons/arrow-down-navy-bf5c37c04d020137209a513c158394fb89df5902f2a12b12bf7445b2659db86b.svg" as="image" type="image/svg+xml">
+<title>Pathway | NoRedInk</title>
+
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<meta content="none" name="msapplication-config">
+<meta content="production" name="rails-env">
+<meta content="https://www.noredink.com" name="assets-root-url">
+<meta content="notranslate" name="google">
+<meta content="gfma7zr9fyyeyt4xvq0wga36k0vo9b" name="facebook-domain-verification">
+<meta content="index,follow" name="robots">
+<meta content="@noredink" name="twitter:site">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link rel="shortcut icon" type="image/x-icon" href="https://www.noredink.com/assets/favicon/favicon-8ac1ca529bfa7f8c60a434623b0fb3341b014ab5e4d6fe83693cfb8f74df5fe1.ico">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-57x57-e3e80d44684231fcf37e4af70dc85d7199a462934a7b10c22b0803fb3c253003.png" rel="apple-touch-icon-precomposed" sizes="57x57">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-114x114-7ccbfb8c3c4b3ef5b516e9dadab0e2168a4269dbba5dd8b3623583b557fefe17.png" rel="apple-touch-icon-precomposed" sizes="114x114">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-72x72-52dd38ceaba17a795d5cf5b3df1b73b8bc3625af8705d2df48e6cead6c144ffe.png" rel="apple-touch-icon-precomposed" sizes="72x72">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-144x144-8b40ca072666dfb616b2e6e9094fbfe08fdde889e9bac2ff86b0ba0712a8e82c.png" rel="apple-touch-icon-precomposed" sizes="144x144">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-60x60-ea856663cb45d102bdb65a62b6574c9a109370d5cc18708417022c936aec93d9.png" rel="apple-touch-icon-precomposed" sizes="60x60">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-120x120-74d0e294833b75dd72f0dbaad8965fd79ed4a6e316d89ffebe73116276aba711.png" rel="apple-touch-icon-precomposed" sizes="120x120">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-76x76-0763c05e1f13df10810e1c91eabfe6768aea864f85ec8c269828bf4f187e49a5.png" rel="apple-touch-icon-precomposed" sizes="76x76">
+<link href="https://www.noredink.com/assets/favicon/apple-touch-icon-152x152-c9e21c1ce9e21e20816e5d8fc5ccdab572cc52d7e8fb9bdde2518fd0ed81ede3.png" rel="apple-touch-icon-precomposed" sizes="152x152">
+<link color="#F3336C" href="https://www.noredink.com/assets/favicon/icon-36dac09f61ea01515e01e33e21c8ee8495e1a7a9f9d32fc75c8e962693f283a8.svg" rel="mask-icon">
+<link href="https://www.noredink.com/assets/favicon/favicon-196x196-1727a219f1f6ed545e1b0ece244b7813e70192036050301a99ae12b8538b8e08.png" rel="icon" sizes="196x196" type="image/png">
+<link href="https://www.noredink.com/assets/favicon/favicon-96x96-5715c30e8163a872fc0aa81500847578b6eeb8e70de6bbb00703f5384735a972.png" rel="icon" sizes="96x96" type="image/png">
+<link href="https://www.noredink.com/assets/favicon/favicon-32x32-a0f3e506d7697e4d7074f4903730c7d53c02ad255af4b5e89d96a1dd1c93422c.png" rel="icon" sizes="32x32" type="image/png">
+<link href="https://www.noredink.com/assets/favicon/favicon-16x16-d1451be5da92094307b186a508cacba62e5953cf1cae5639b49815d04a8f7933.png" rel="icon" sizes="16x16" type="image/png">
+<link href="https://www.noredink.com/assets/favicon/favicon-128-3dbd3ff8971a80bd32da8b4ca13155367bc6a79fc495f646da55ad688e6305a0.png" rel="icon" sizes="128x128" type="image/png">
+<meta content="favicon/#F3336C" name="msapplication-TileColor">
+<meta content="https://www.noredink.com/assets/favicon/mstile-144x144-8b40ca072666dfb616b2e6e9094fbfe08fdde889e9bac2ff86b0ba0712a8e82c.png" name="msapplication-TileImage">
+<meta content="https://www.noredink.com/assets/favicon/mstile-70x70-3dbd3ff8971a80bd32da8b4ca13155367bc6a79fc495f646da55ad688e6305a0.png" name="msapplication-square70x70logo">
+<meta content="https://www.noredink.com/assets/favicon/mstile-150x150-bbe02a5b73560bd67f4cf632b3e64d37ed2ea16994ae25543612a484ed56e63c.png" name="msapplication-square150x150logo">
+<meta content="https://www.noredink.com/assets/favicon/mstile-310x150-0d8c29f960f5fbabd87b802a95e3d37ee43267bb6673b5361e4f45e7f60f0b02.png" name="msapplication-wide310x150logo">
+<meta content="https://www.noredink.com/assets/favicon/mstile-310x310-5692a92e04337c33ad6cc6eefc282f9f08f7bd19f2294d90302f77d491e3ea2f.png" name="msapplication-square310x310logo">
+
+<link href="./na_files/css" rel="stylesheet">
+<link rel="preload" href="https://fonts.gstatic.com/s/muli/v28/7Auwp_0qiz-afTLGLQjUwkQ.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="stylesheet" media="screen" href="./na_files/layout2019-d1bec41448db397884c6a9a1d240b786d7d65d2a01058f83876f106e3a68ebb9.css">
+
+
+<meta content="authenticity_token" name="csrf-param">
+<meta content="BOZW7/xbAvpLVGS3puVY/2/WFrU/DQ6gca3RXSh2kNNiDWW5CdAOh2Ye1FYavup7Ijx18bCzVyLHh84Dcaem6w==" name="csrf-token">
+
+<script>
+
+ window.NRI_ENV = window.NRI_ENV || {};
+ window.NRI_ENV.context = "production";
+ window.NRI_ENV.siteId = "production";
+ window.NRI_ENV.lms = {"type":"NRI"}
+
+ window.NRI_ENV.bugsnagClientReleaseStage = window.NRI_ENV.siteId;
+
+ window.NRI_ENV.bugsnagClientNotifyReleaseStages =
+     [window.NRI_ENV.siteId]
+;
+
+ window.NRI_ENV.bugsnagClientCodeVersion =
+   "594c4bc88882494f91ba4a5e2cb1e0a7fd4160c7"
+   ;
+
+ window.NRI_ENV.jsBugsnagApiKey =
+   "944f1d69ec4be09fe2073dae0fc88693";
+
+ window.NRI_ENV.elmBugsnagApiKey =
+   "c4cc5cb37c681cd5db837ecc38ab4230";
+
+ window.NRI_ENV.user = {
+     id: 18392302,
+     username: "jingwen.hu",
+     displayName: "Jingwen Hu",
+     email: "jingwen.hu@student.keystoneacademy.cn",
+     kind: 1,
+   }
+
+ window.NRI_ENV.timeZoneName = "Asia/Shanghai";
+ window.NRI_ENV.timeZoneStats = true;
+ window.NRI_ENV.sessionTimeout = null;
+ window.NRI_ENV.detectAdblocker = false;
+
+ window.NRI_ENV.userflowToken =
+     "ct_goewk7jrcrgvnmsbl5xjlfg2wi";
+
+ window.NRI_ENV.analyticsCommonProperties = {"lms":"none"}
+</script><style id="autoconsent-prehide">#didomi-popup,.didomi-popup-container,.didomi-popup-notice,.didomi-consent-popup-preferences,#didomi-notice,.didomi-popup-backdrop,.didomi-screen-medium,.trustarc-banner-container,.truste_popframe,.truste_overlay,.truste_box_overlay,#truste-consent-track,#CybotCookiebotDialog,#dtcookie-container,#cookiebanner,#cb-cookieoverlay,div[id^='sp_message_container_'],.message-overlay,#cmpbox,#cmpbox2,#onetrust-banner-sdk,#onetrust-consent-sdk,.onetrust-pc-dark-filter,.js-consent-banner,.klaro,.unic,.modal:has(.unic),.cmp-root,div[data-testid=main-cookies-banner-container],div:has(> div:first-child):has(> div:last-child):has(> section [data-testid="strictly-necessary-cookies"]),#adroll_consent_container,span[data-action="sp-cc"][data-sp-cc*="rejectAllAction"],#cookiescript_injected,#awsccc-cb-content,#awsccc-cs-container,#awsccc-cs-modalOverlay,#awsccc-cs-container-inner,.axeptio_widget,.cookie-alert.t-dark,#bnp_container,#BorlabsCookieBox,.bpa-cookie-banner,.cc_banner-wrapper,#cl-consent,#cmplz-cookiebanner-container,.cc-type-categories[aria-describedby="cookieconsent:desc"],.cc-type-info[aria-describedby="cookieconsent:desc"],.cc-type-opt-in[aria-describedby="cookieconsent:desc"],#cookie-law-info-bar,#cookie-notice,#cookie-information-template-wrapper,.cookiealert,div[class*="Overlay__container"]:has(div[class*="TCF2Popup"]),.dl_cookieBanner_container,[data-project="mol-fe-cmp"],.sp-dsgvo,div[data-testid=cookie-consent-modal-backdrop],#gdpr-single-choice-overlay,#gdpr-privacy-settings,.pea_cook_wrapper,.pea_cook_more_info_popover,#ez-cookie-dialog-wrapper,div[data-testid="cookie-policy-manage-dialog"],.fc-consent-root,.fc-dialog-container,.fc-dialog-overlay,.fc-dialog-content,.HTjtHe#xe7COe,.cookieModalContent,#cookie-banner-overlay,.privacy-consent--backdrop,.privacy-consent--modal,#iubenda-cs-banner,div[class^=pecr-cookie-banner-],.cookie-bar,.artdeco-global-alert[type=COOKIE_CONSENT],div[aria-labelledby=pwa-consent-layer-title],div[class^=StyledConsentLayerWrapper-],[data-name="mediavine-gdpr-cmp"],#ccc-module,#wcpConsentBannerCtrl,.cookie-alert, cookie-alert__content,#moove_gdpr_cookie_info_bar,.mt-cc-bnnr__wrapper,#nhsuk-cookie-banner,.button--notice,.disc-cp--active,.osano-cm-window,.cookieBanner--visibility,#gdprCookieBanner,#cookie-bar,#gdpr-consent-tool-wrapper,iframe[src^="https://cmp-consent-tool.privacymanager.io"],#pubtech-cmp,#qc-cmp2-main,#qc-cmp2-container,section:has(a[href^="https://www.reddit.com/policies/cookies"]),sibbo-cmp-layout,#sd-cmp,#tarteaucitronRoot,#__tealiumGDPRecModal,#__tealiumGDPRcpPrefs,#consent-layer,#termly-code-snippet-support,#reject-all,.consent-banner-box,#cmpBanner,[data-testid="BottomBar"],#catapult-cookie-bar,#cookie-banner-wrapper,.dip-consent,.dip-consent-container,div[aria-labelledby=CookieAlertModalHeading],section[data-test=initial-waitrose-cookie-consent-banner],section[data-test=cookie-consent-modal],#gdpr-cookie-consent-bar,tp-yt-iron-overlay-backdrop.opened,ytd-consent-bump-v2-lightbox,.consent-bump-v2-lightbox { opacity: 0 !important; z-index: -1 !important; pointer-events: none !important; } </style>
+
+<script src="./na_files/index-8120c9b85012a457bda6307063dfe7fff6b6670b1cdf2e12942d6e72488c42af.js" crossorigin="anonymous"></script>
+<script src="./na_files/index-5792b37774831c4e323291fbc8fe88e89ade5f5bd4d857bb0b7ae6b1cf7a0e0a.js" crossorigin="anonymous"></script>
+
+<script>
+  window.browser_min_versions = {"chrome":63,"safari":11,"firefox":57,"edge":18}
+
+  // denyList for specific rollbar messages. Many of these entries are from the
+  // dynamic Configurable variable, but migrating them as that list rarely changes.
+  window.ignoredMessages = [
+    "d2dtbqe8cwmx9c.cloudfront.net/assets/unselectable",
+    "document.getElementById\\('mapid'\\).style",
+    "NPObject",
+    "Object \\[object Object\\] has no method 'sendResult' ",
+    "Failed to instantiate logic ExternalWidgetLogic",
+    "PADDINGXXPADDING",
+    "Cannot read property 'contentWindow'",
+    "\\S+\\.data\\.indexOf is not a function",
+    "Can't find variable: MyAppGet",
+    "Can't find variable: zaloJSV2",
+    "undefined is not an object (evaluating 'document.getElementsByClassName('hide-icon hidden mce-visual-caret-hidden')[0].remove')"
+  ];
+
+  window.bugsnagClient = bugsnag({
+    apiKey: window.NRI_ENV.jsBugsnagApiKey,
+    appType: 'client-js',
+    appVersion: window.NRI_ENV.bugsnagClientCodeVersion,
+    maxEvents: 20,
+    releaseStage: window.NRI_ENV.bugsnagClientReleaseStage,
+    notifyReleaseStages: window.NRI_ENV.bugsnagClientNotifyReleaseStages,
+    beforeSend: function (report) {
+      // Ignore events for unsupported browsers
+      if (!window.isSupportedBrowser(window.browser_min_versions)) {
+        report.ignore();
+        return;
+      }
+
+      const breadcrumbs = report.breadcrumbs;
+      // We are ignoring a load error when it's an ad file blocked by the client
+      // We are expecting these errors when trying to detect adblockers
+      if (window.NRI_ENV.detectAdblocker) {
+        const googleAds = /HEAD.*(adsbygoogle|prebid)/i;
+        if (report.errorClass === 'TypeError' &&
+            (report.errorMessage === 'Failed to fetch' ||
+            report.errorMessage === 'Load failed') &&
+            breadcrumbs.some(breadcrumb => googleAds.test(breadcrumb.metaData.request))) {
+          if (DEBUG) { console.log("Skipping error: ", report); }
+          return false;
+        }
+      }
+
+      // Bugsnag doesn't group some events the way we want.
+      // Here we make these errors group by the error message.
+      if (report.errorClass === 'TypeError' ||
+          report.errorClass === 'NetworkError') {
+        report.groupingHash = report.errorMessage
+      }
+
+      const frames = report.stacktrace;
+      const allowedUrls = /localhost|noredink|cloudfront/i;
+
+      // always send allowed urls
+      if (frames.every(frame => allowedUrls.test(frame.file))) {
+        // Immediately succeed; don't ignore this one!
+        return true;
+      }
+
+      // Failing HTTP requests to delighted.com or assorted russian sites are
+      // likely the result of user-installed browser plugins / malware.
+      if (report.errorClass === 'NetworkError' &&
+         (/http.+\.ru/.test(report.errorMessage) ||
+         /http.+delighted\.com/.test(report.errorMessage))) {
+        report.ignore();
+        return;
+      }
+
+      const denyUrls = /kaspersky-labs/i;
+
+      // never send banned urls
+      if (frames.some(frame => denyUrls.test(frame.file))) {
+        // Immediately fail. Ignore this one!
+        return false;
+      }
+
+      // keep only 1% of "unknown" urls
+      // return Math.random() < 0.01
+      return false;
+    }
+  })
+  if (window.NRI_ENV.user !== undefined) {
+    bugsnagClient.user = window.NRI_ENV.user;
+  }
+</script>
+
+<!-- Begin Inspectlet Embed Code -->
+<script type="text/javascript" id="inspectletjs">
+window.__insp = window.__insp || [];
+__insp.push(['wid', 816183186]);
+  __insp.push(['identify', 18392302]);
+  __insp.push(['tagSession',
+    {
+      email: "jingwen.hu@student.keystoneacademy.cn",
+      kind: "Student",
+      username: "jingwen.hu"
+    }]);
+(function() {
+function ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); };
+document.readyState != "complete" ? (window.attachEvent ? window.attachEvent('onload', ldinsp) : window.addEventListener('load', ldinsp, false)) : ldinsp();
+
+})();
+</script>
+<!-- End Inspectlet Embed Code -->
+
+
+<style type="text/css">#_copy{align-items:center;background:#4494d5;border-radius:3px;color:#fff;cursor:pointer;display:flex;font-size:13px;height:30px;justify-content:center;position:absolute;width:60px;z-index:1000}#select-tooltip,#sfModal,.modal-backdrop,div[id^=reader-helper]{display:none!important}.modal-open{overflow:auto!important}._sf_adjust_body{padding-right:0!important}.super_copy_btns_div{position:fixed;width:154px;left:10px;top:45%;background:#e7f1ff;border:2px solid #4595d5;font-weight:600;border-radius:2px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;z-index:5000}.super_copy_btns_logo{width:100%;background:#4595d5;text-align:center;font-size:12px;color:#e7f1ff;line-height:30px;height:30px}.super_copy_btns_btn{display:block;width:128px;height:28px;background:#7f5711;border-radius:4px;color:#fff;font-size:12px;border:0;outline:0;margin:8px auto;font-weight:700;cursor:pointer;opacity:.9}.super_copy_btns_btn:hover{opacity:.8}.super_copy_btns_btn:active{opacity:1}</style></head>
+<body class="notranslate  not_tablet " style="" data-new-gr-c-s-check-loaded="14.1091.0" data-gr-ext-installed="">
+
+<script>
+  function toggleMobileMenu() {
+    let menu = document.getElementById('logo-mobile-menu');
+    menu.setAttribute('aria-expanded', !(menu.getAttribute('aria-expanded') == 'true'));
+  }
+</script>
+<a href="https://www.noredink.com/learn/learning_paths/1139#container2019" id="skip-to-content-from-header">Skip to content</a>
+
+
+<div id="container2019">
+
+
+</div>
+
+<script src="./na_files/analytics.min-825a5d62b198d5894d1d4319db1ab82cb8025900febd0f5e4192b46c7b39d5ae.js" crossorigin="anonymous"></script>
+<script>
+  (function () {
+    try {
+      if (!navigator.serviceWorker) return
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (var i = 0; i < registrations.length; i++) {
+          registrations[i].unregister()
+        }
+      }).catch(function(err) {
+        if (err.name !== "SecurityError") {
+          throw err
+        }
+      })
+    } catch (err) {
+      // Running the above operation in Firefox with specific cookie settings
+      // will fail with a "SecurityError: The operation is not secure". This
+      // shouldn't block the user from using the site, and also not send us
+      // Bugsnag noise.
+      // More info: https://bugzilla.mozilla.org/show_bug.cgi?id=1429714
+      if (err.name !== "SecurityError") {
+        throw err
+      }
+    }
+  })()
+</script>
+
+<script>
+  (() => {
+    // https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements
+    (function() {
+      if (window.Reflect === void 0 || window.customElements === void 0 || window.customElements.hasOwnProperty("polyfillWrapFlushCallback")) {
+        return;
+      }
+      const BuiltInHTMLElement = HTMLElement;
+      window.HTMLElement = function HTMLElement2() {
+        return Reflect.construct(BuiltInHTMLElement, [], this.constructor);
+      };
+      HTMLElement.prototype = BuiltInHTMLElement.prototype;
+      HTMLElement.prototype.constructor = HTMLElement;
+      Object.setPrototypeOf(HTMLElement, BuiltInHTMLElement);
+    })();
+  })();
+  /**
+  * @license
+  * Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+  * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+  * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+  * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+  * Code distributed by Google as part of the polymer project is also
+  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+  */
+</script>
+
+<script>
+  /**
+  * Minified by jsDelivr using UglifyJS v3.3.23.
+  * Original file: /npm/request-idle-polyfill@1.0.1/dist/index.js
+  */
+  if("undefined"==typeof window)var window_1=this;window.requestIdleCallback=window.requestIdleCallback||function(e){var n=Date.now();return setTimeout(function(){e({didTimeout:!1,timeRemaining:function(){return Math.max(0,50-(Date.now()-n))}})},1)},window.cancelIdleCallback=window.cancelIdleCallback||function(e){clearTimeout(e)};
+</script>
+
+<script>
+  /**
+  * This script patches XMLHttpRequest to automatically and correctly handle
+  * DDoS challenge pages delivered by CloudFlare when we are in rate-limited
+  * mode during a DDoS attack.
+  *
+  * When a user has performed an action that sends an XHR to a rate-limited
+  * endpoint and they exceed the limit the following will happen:
+  * 1. Capture the result, which will be denoted by a 429 status
+  * 2. Write the HTML page that CloudFlare sends to verify the user's browser
+  *    into an iframe and display it in a modal that blocks the entire page
+  * 3. Wait for the CloudFlare iframe to finish verifying the user's browser
+  * 4. Reload the page
+  *
+  * To test this file locally, open up routes.rb and find development/ddos_protection_sessions.
+  * Follow the instructions to comment and uncomment the appropriate routes.
+  */
+  
+  var OldXMLHttpRequest = window.XMLHttpRequest
+  
+  var errorMessage = 'We\'ve been getting a lot of traffic! Please try again after your browser has been automatically verified.'
+  
+  window.XMLHttpRequest = function() {
+    var xhr = new OldXMLHttpRequest() // XMLHttpRequest takes no arguments. We got lucky!
+  
+    xhr.addEventListener('readystatechange', function(event) {
+      if (xhr.readyState !== 4 || xhr.status !== 429) return
+      if (xhr.responseURL.indexOf(window.location.origin) !== 0) return // we only want to handle responses from our origin. this ignores stuff like error reporting rate-limiting
+  
+      var originalResponse = xhr.response
+      Object.defineProperties(xhr, {
+        responseText: { value: errorMessage }
+      })
+  
+      injectAndExecute(originalResponse)
+    })
+  
+    return xhr
+  }
+  
+  function injectAndExecute(content) {
+    var backdrop = document.createElement('div')
+    backdrop.style.position = 'fixed'
+    backdrop.style.left = backdrop.style.top = '0'
+    backdrop.style.width = backdrop.style.height = '100%'
+    backdrop.style.backgroundColor = 'rgba(0,78,149,0.9)'
+    backdrop.style.display = 'flex'
+    backdrop.style.justifyContent = backdrop.style.alignItems = 'center'
+    backdrop.style.zIndex = '999999999'
+    backdrop.addEventListener('click', function (e) {
+      e.stopPropagation()
+    })
+  
+    var iframe = document.createElement('iframe')
+    iframe.style.width = '100%'
+    iframe.style.height = '360px'
+    iframe.style.border = 0
+  
+    // The iframe is going to load at least twice. Sometimes it will be three
+    // but there should always be two where the origin is the same as the current
+    // page's origin and they should always be last. The first time will be the
+    // DDoS challenge itself. After this page unloads we should hide the iframe
+    // so the user doesn't see a flash of a nested NoRedInk page. The second time
+    // the iframe loads will be Cloudflare attempting to open the URL that we
+    // originally requested. When this page loads we can be certain that the
+    // Cloudflare challenge cookie is set and it's safe to reload the page.
+    var loadCount = 0
+    iframe.onload = function() {
+      // Ignore onload events from, e.g. `about:blank`. They are unreliable and
+      // don't always occur.
+      if (iframe.contentWindow.location.origin !== window.location.origin) return
+  
+      loadCount += 1
+  
+      // The challenge iframe has loaded
+      if (loadCount === 1) {
+        iframe.contentWindow.onunload = function () {
+          iframe.style.visibility = 'hidden'
+        }
+      }
+  
+      // The original requested URL has loaded
+      if (loadCount === 2) {
+        window.location.reload()
+      }
+    }
+  
+    var modal = document.createElement('div')
+    modal.style.width = '600px'
+    modal.style.padding = '35px 0 25px 0'
+    modal.style.margin = '75px auto'
+    modal.style.boxShadow = '0 1px 10px 0 rgba(0,0,0,0.35)'
+    modal.style.borderRadius = '20px'
+    modal.style.backgroundColor = '#ffffff'
+  
+    var title = document.createElement('h3')
+    title.textContent = errorMessage
+    title.style.fontFamily = '"Muli", Helvetica, Arial, sans-serif'
+    title.style.fontSize = '20px'
+    title.style.color = '#004e95'
+    title.style.lineHeight = '27px'
+    title.style.fontWeight = '700'
+    title.style.margin = '0 65px'
+    title.style.textAlign = 'center'
+  
+    modal.appendChild(title)
+    modal.appendChild(iframe)
+    backdrop.appendChild(modal)
+    document.body.appendChild(backdrop)
+  
+    iframe.contentDocument.open()
+    iframe.contentDocument.write(content)
+    iframe.contentDocument.close()
+  }
+</script>
+
+
+<script src="./na_files/index-8d133678f1812bf50ea87d11816819c96aac708e15df24098580c24ef2eec56d.js" crossorigin="anonymous"></script>
+<div id="elm-flags" class="elm-flags" data-flags="{&quot;user&quot;:{&quot;premium&quot;:true,&quot;kind&quot;:&quot;student&quot;},&quot;returnTo&quot;:{&quot;url&quot;:&quot;/learn/mastery&quot;,&quot;name&quot;:&quot;Learn&quot;,&quot;icon&quot;:&quot;library&quot;},&quot;name&quot;:&quot;Body Paragraphs: Transition Words and Phrases&quot;,&quot;completion&quot;:0.0,&quot;nodeGroups&quot;:[[{&quot;type&quot;:&quot;Level&quot;,&quot;topics&quot;:[{&quot;id&quot;:1141,&quot;name&quot;:&quot;Identifying the Relationships Between Ideas&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:3,&quot;levelTwo&quot;:3,&quot;levelThree&quot;:4,&quot;levelFour&quot;:4,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:true,&quot;recommendedMastery&quot;:true,&quot;locked&quot;:false,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:&quot;/learn/practice?practice_mode=2\u0026root_topic_id=1139\u0026topic_id=1141&quot;,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1141&quot;,&quot;historyUrl&quot;:null}]},{&quot;type&quot;:&quot;Level&quot;,&quot;topics&quot;:[{&quot;id&quot;:1142,&quot;name&quot;:&quot;Identifying the Functions of Transitions&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:3,&quot;levelTwo&quot;:3,&quot;levelThree&quot;:4,&quot;levelFour&quot;:4,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:false,&quot;recommendedMastery&quot;:false,&quot;locked&quot;:true,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:null,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1142&quot;,&quot;historyUrl&quot;:null}]},{&quot;type&quot;:&quot;Checkpoint&quot;,&quot;topics&quot;:[{&quot;id&quot;:1143,&quot;name&quot;:&quot;Evaluating the Use of Transition Words and Phrases&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:3,&quot;levelTwo&quot;:3,&quot;levelThree&quot;:4,&quot;levelFour&quot;:4,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:false,&quot;recommendedMastery&quot;:false,&quot;locked&quot;:false,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:&quot;/learn/practice?practice_mode=2\u0026root_topic_id=1139\u0026topic_id=1143&quot;,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1143&quot;,&quot;historyUrl&quot;:null}]}],[{&quot;type&quot;:&quot;Level&quot;,&quot;topics&quot;:[{&quot;id&quot;:1202,&quot;name&quot;:&quot;Using Conjunctions as Transitions&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:4,&quot;levelTwo&quot;:4,&quot;levelThree&quot;:4,&quot;levelFour&quot;:4,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:false,&quot;recommendedMastery&quot;:false,&quot;locked&quot;:true,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:null,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1202&quot;,&quot;historyUrl&quot;:null}]},{&quot;type&quot;:&quot;Level&quot;,&quot;topics&quot;:[{&quot;id&quot;:1203,&quot;name&quot;:&quot;Correcting Errors with Conjunctions as Transitions&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:3,&quot;levelTwo&quot;:3,&quot;levelThree&quot;:3,&quot;levelFour&quot;:3,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:false,&quot;recommendedMastery&quot;:false,&quot;locked&quot;:true,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:null,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1203&quot;,&quot;historyUrl&quot;:null}]},{&quot;type&quot;:&quot;Checkpoint&quot;,&quot;topics&quot;:[{&quot;id&quot;:1144,&quot;name&quot;:&quot;Using the Appropriate Transition Words and Phrases&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:2,&quot;levelTwo&quot;:2,&quot;levelThree&quot;:3,&quot;levelFour&quot;:3,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:false,&quot;recommendedMastery&quot;:false,&quot;locked&quot;:true,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:null,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1144&quot;,&quot;historyUrl&quot;:null}]}],[{&quot;type&quot;:&quot;Review&quot;,&quot;topics&quot;:[{&quot;id&quot;:1145,&quot;name&quot;:&quot;Building a Paragraph with Transitions&quot;,&quot;completion&quot;:0.0,&quot;progress&quot;:{&quot;levelOne&quot;:1,&quot;levelTwo&quot;:1,&quot;levelThree&quot;:2,&quot;levelFour&quot;:2,&quot;currentPoints&quot;:0},&quot;pastMastery&quot;:false,&quot;recommendedMastery&quot;:false,&quot;locked&quot;:true,&quot;displayAsPremium&quot;:false,&quot;practiceUrl&quot;:null,&quot;quizUrl&quot;:null,&quot;lessonUrl&quot;:&quot;/curriculum/api/lessons_by_topic_ids?topic_ids%5B%5D=1145&quot;,&quot;historyUrl&quot;:null}]}]],&quot;routeBase&quot;:&quot;/learn/learning_paths/1139&quot;,&quot;flash&quot;:{&quot;notice&quot;:[],&quot;warning&quot;:[],&quot;error&quot;:[]},&quot;readAloudForHtmlLessonsEnabled&quot;:false,&quot;readAloud&quot;:{&quot;enabled&quot;:false}}"></div><div class="nri-program-root-container"><span style="display: none;" class="elm-css-style-wrapper"><style>
+._3208298d{clip:rect(1px, 1px, 1px, 1px);position:absolute;height:1px;width:1px;overflow:hidden;margin:-1px;padding:0;border:0;}</style></span><main class="_2c0547b0"><span style="display: none;" class="elm-css-style-wrapper"><style>
+._80514034{align-items:center;display:flex;margin:0;font-size:30px;color:#004e95;font-family:"Muli", Helvetica, Arial, sans-serif;text-decoration:none;}
+@media only screen and (max-width: 1000px){._80514034{font-size:25px;}}
+._564feab1{align-items:center;display:flex;}
+@media only screen and (max-width: 1000px){._564feab1{margin-bottom:10px;flex-wrap:wrap;}}
+._f90e8546{background-color:#d4f0ff;margin:14px auto 0;border-radius:20px;display:flex;}
+@media only screen and (min-width: 1000px){._f90e8546{max-width:370px;}}
+@media only screen and (min-width: 500px) and (max-width: 1000px){._f90e8546{margin-left:20px;margin-right:20px;}}
+@media only screen and (max-width: 500px), only screen and (max-width: 1000px){._f90e8546{flex-direction:column;}}
+@media only screen and (max-width: 500px){._f90e8546{border-radius:0;}}
+._ea15f36f{background-color:#f5f5f5;border-bottom:1px solid #ebebeb;}
+._9e79a51{background-color:#f5f5f5;margin:14px auto 0;border-radius:20px;display:flex;}
+@media only screen and (min-width: 1000px){._9e79a51{max-width:370px;}}
+@media only screen and (min-width: 500px) and (max-width: 1000px){._9e79a51{margin-left:20px;margin-right:20px;}}
+@media only screen and (max-width: 500px), only screen and (max-width: 1000px){._9e79a51{flex-direction:column;}}
+@media only screen and (max-width: 500px){._9e79a51{border-radius:0;}}
+._dbd5391d{box-sizing:border-box;border-radius:8px;width:320px;padding:20px;position:absolute;z-index:100;background-color:#004e95;border:1px solid #004e95;font-family:"Muli", Helvetica, Arial, sans-serif;font-size:16px;font-weight:600;color:#ffffff;box-shadow:0 1px 1px hsl(0deg 0% 0% / 0.075), 0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075), 0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075);cursor:initial;}
+._dbd5391d  a{text-decoration:underline;color:#ffffff;}
+._dbd5391d  a:visited{color:#ffffff;}
+._dbd5391d  a:hover{color:#ffffff;}
+._dbd5391d  a:focus-visible{outline:2px solid transparent;box-shadow:0 0 0 2px #FFF;}
+@media only screen and (max-width: 500px){._dbd5391d{transform:translate(-50%, -100%);}}
+@media only screen and (max-width: 500px){._dbd5391d::before{right:20px;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (max-width: 500px){._dbd5391d::after{right:20px;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (max-width: 500px){._dbd5391d::before{border-top-color:#004e95;border-width:9px;margin-left:-9px;}}
+@media only screen and (max-width: 500px){._dbd5391d::after{border-top-color:#004e95;border-width:8px;margin-left:-8px;}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._dbd5391d{transform:translate(-50%, -100%);}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._dbd5391d::before{right:20px;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._dbd5391d::after{right:20px;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._dbd5391d::before{border-top-color:#004e95;border-width:9px;margin-left:-9px;}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._dbd5391d::after{border-top-color:#004e95;border-width:8px;margin-left:-8px;}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._dbd5391d{transform:translate(-50%, -100%);}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._dbd5391d::before{right:20px;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._dbd5391d::after{right:20px;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._dbd5391d::before{border-top-color:#004e95;border-width:9px;margin-left:-9px;}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._dbd5391d::after{border-top-color:#004e95;border-width:8px;margin-left:-8px;}}
+@media only screen and (min-width: 1000px){._dbd5391d{transform:translate(-50%, -100%);}}
+@media only screen and (min-width: 1000px){._dbd5391d::before{left:50%;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (min-width: 1000px){._dbd5391d::after{left:50%;top:100%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;}}
+@media only screen and (min-width: 1000px){._dbd5391d::before{border-top-color:#004e95;border-width:9px;margin-left:-9px;}}
+@media only screen and (min-width: 1000px){._dbd5391d::after{border-top-color:#004e95;border-width:8px;margin-left:-8px;}}
+._9e4ee534{box-sizing:border-box;display:inline-block;text-align:left;position:relative;margin-bottom:5px;flex-shrink:0;width:20px;}
+._9e4ee534:last-child{margin-bottom:0;}
+._31ee30f5{cursor:pointer;background-color:transparent;border-width:0;padding:0;text-align:left;display:flex;align-items:center;}
+._355ddce5{cursor:pointer;font-family:"Muli", Helvetica, Arial, sans-serif;text-overflow:ellipsis;overflow:hidden;text-decoration:none;background-image:none;text-shadow:none;transition:background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s;box-shadow:none;border:0;margin:0;display:inline-flex;align-items:center;justify-content:center;font-size:15px;border-radius:8px;line-height:19px;box-sizing:border-box;border-width:1px;border-bottom-width:3px;min-height:45px;padding-top:2px;padding-bottom:2px;padding-left:16px;padding-right:16px;min-width:100px;width:100%;color:#0A64FF;background-color:#ffffff;font-weight:700;text-align:center;border-color:#0A64FF;border-style:solid;border-bottom-style:solid;border-bottom-color:#0A64FF;font-style:normal;display:flex;justify-content:flex-start;margin:10px 0;}
+._355ddce5:hover{text-decoration:none;}
+._355ddce5:disabled{cursor:not-allowed;}
+._355ddce5[aria-disabled=true]{cursor:not-allowed;}
+._355ddce5:hover{color:#004cc9;background-color:#d4f0ff;}
+._355ddce5:hover:disabled{background-color:#ffffff;}
+._355ddce5:visited{color:#0A64FF;}
+._355ddce5:first-child{margin-top:0;}
+._355ddce5:last-child{margin-bottom:0;}
+._355ddce5:focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,255,255,1),0 0 0 6px rgba(231,13,79,1);}
+._e0ae5e95{cursor:pointer;font-family:"Muli", Helvetica, Arial, sans-serif;text-overflow:ellipsis;overflow:hidden;text-decoration:none;background-image:none;text-shadow:none;transition:background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s;box-shadow:none;border:0;margin:0;display:inline-flex;align-items:center;justify-content:center;font-size:15px;border-radius:8px;line-height:19px;box-sizing:border-box;border-width:1px;border-bottom-width:3px;min-height:45px;padding-top:2px;padding-bottom:2px;padding-left:16px;padding-right:16px;min-width:100px;width:100%;color:#707070;background-color:#ebebeb;font-weight:700;text-align:center;border-color:#bfbfbf;border-style:solid;border-bottom-style:solid;border-bottom-color:#bfbfbf;font-style:normal;display:flex;justify-content:flex-start;margin:10px 0;}
+._e0ae5e95:hover{text-decoration:none;}
+._e0ae5e95:disabled{cursor:not-allowed;}
+._e0ae5e95[aria-disabled=true]{cursor:not-allowed;}
+._e0ae5e95:hover{color:#707070;background-color:#ebebeb;}
+._e0ae5e95:hover:disabled{background-color:#ebebeb;}
+._e0ae5e95:visited{color:#707070;}
+._e0ae5e95:first-child{margin-top:0;}
+._e0ae5e95:last-child{margin-bottom:0;}
+._e0ae5e95:focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,255,255,1),0 0 0 6px rgba(231,13,79,1);}
+._60f00b06{cursor:pointer;font-family:"Muli", Helvetica, Arial, sans-serif;text-overflow:ellipsis;overflow:hidden;text-decoration:none;background-image:none;text-shadow:none;transition:background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s;box-shadow:none;border:0;margin:0;display:inline-flex;align-items:center;justify-content:center;font-size:15px;border-radius:8px;line-height:19px;box-sizing:border-box;border-width:1px;border-bottom-width:3px;min-height:45px;padding-top:2px;padding-bottom:2px;padding-left:16px;padding-right:16px;min-width:100px;width:100%;color:#ffffff;background-color:#0A64FF;font-weight:700;text-align:center;border-style:none;border-bottom-style:solid;border-bottom-color:#004cc9;font-style:normal;display:flex;justify-content:flex-start;margin:10px 0;}
+._60f00b06:hover{text-decoration:none;}
+._60f00b06:disabled{cursor:not-allowed;}
+._60f00b06[aria-disabled=true]{cursor:not-allowed;}
+._60f00b06:hover{color:#ffffff;background-color:#004cc9;}
+._60f00b06:hover:disabled{background-color:#0A64FF;}
+._60f00b06:visited{color:#ffffff;}
+._60f00b06:first-child{margin-top:0;}
+._60f00b06:last-child{margin-bottom:0;}
+._60f00b06:focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px rgba(255,255,255,1),0 0 0 6px rgba(231,13,79,1);}
+._b3ecf70f{cursor:pointer;padding:20px;display:flex;align-items:center;width:100%;min-height:90px;margin:0;}
+._8a9bf9ab{display:flex;flex-direction:column;align-items:center;position:relative;}
+._cacd86a3{display:flex;flex-direction:column;justify-content:center;margin-left:5px;}
+._fd567d89{display:flex;flex-direction:column;}
+._e97297e4{display:flex;justify-content:center;align-items:center;}
+._5f7db77{display:flex;justify-content:space-between;align-items:center;width:100%;}
+._324310c2{display:flex;}
+._afaebb60{display:none;align-items:center;background-color:#ffffff;border-bottom-left-radius:20px;border-bottom-right-radius:20px;}
+@media only screen and (min-width: 1000px){._afaebb60{justify-content:flex-start;position:absolute;top:calc(100% - 10px);width:100%;transition:box-shadow;transition-duration:1.0s;box-shadow:0 0.8px 0.7px hsl(0deg 0% 0% / 0.1), 0 1px 1px -1.2px hsl(0deg 0% 0% / 0.1), 0 5px 2.5px -2.5px hsl(0deg 0% 0% / 0.1);;}}
+@media (prefers-reduced-motion){._afaebb60{transition:none;}}
+._48bc2a49{flex-basis:350px;margin:10px;transition:box-shadow;transition-duration:1.0s;display:flex;align-items:center;background-color:#ffffff;box-shadow:0 0.8px 0.7px hsl(0deg 0% 0% / 0.1), 0 1px 1px -1.2px hsl(0deg 0% 0% / 0.1), 0 5px 2.5px -2.5px hsl(0deg 0% 0% / 0.1);;}
+@media only screen and (max-width: 1000px), only screen and (min-width: 1000px){._48bc2a49{border-radius:20px;}}
+@media (prefers-reduced-motion){._48bc2a49{transition:none;}}
+@media only screen and (max-width: 1000px){._48bc2a49{flex-basis:100%;}}
+@media only screen and (max-width: 500px){._48bc2a49{margin-left:0;margin-right:0;border-radius:0;}}
+._4261c0b4{flex-basis:350px;margin:10px;transition:box-shadow;transition-duration:1.0s;display:flex;align-items:center;background-color:#ffffff;}
+@media only screen and (max-width: 1000px), only screen and (min-width: 1000px){._4261c0b4{border-radius:20px;}}
+@media (prefers-reduced-motion){._4261c0b4{transition:none;}}
+@media only screen and (max-width: 1000px){._4261c0b4{flex-basis:100%;}}
+@media only screen and (max-width: 500px){._4261c0b4{margin-left:0;margin-right:0;border-radius:0;}}
+._40798372{flex-direction:column;display:flex;justify-content:center;align-items:center;width:50px;height:50px;border-radius:25px;background-color:#00aaff;}
+._40798372  img{width:32px;display:flex;justify-content:center;}
+._40798372  svg{width:32px;display:flex;justify-content:center;}
+._10136cf8{flex-grow:1;}
+._f16701d9{font-family:"Muli", Helvetica, Arial, sans-serif;font-size:15px;color:#707070;line-height:23px;font-weight:400;padding:0;text-align:left;margin:0px 0px 7px 0px;margin:0;line-height:1.2;}
+._f16701d9:last-child{margin:0;}
+._f16701d9  a{text-decoration:none;color:#0A64FF;border-bottom:1px solid #0A64FF;}
+._f16701d9  a:visited{color:#0A64FF;}
+._e100581f{font-family:"Muli", Helvetica, Arial, sans-serif;font-size:18px;color:#707070;line-height:1.4;margin-top:0;}
+._5f1561af{font-family:"Muli", Helvetica, Arial, sans-serif;font-size:20px;color:#004e95;line-height:1.2;font-weight:700;padding:0;text-align:left;margin:0;font-family:"Muli", Helvetica, Arial, sans-serif;font-size:20px;color:#004e95;line-height:1.2;font-weight:700;padding:0;text-align:left;margin:0;font-size:18px;}
+._d2debf8c{font-family:"Muli", Helvetica, Arial, sans-serif;font-size:20px;color:#004e95;line-height:1.2;font-weight:700;padding:0;text-align:left;margin:0;font-family:"Muli", Helvetica, Arial, sans-serif;font-size:20px;color:#004e95;line-height:1.2;font-weight:700;padding:0;text-align:left;margin:0;padding-left:20px;padding-right:20px;}
+._4edc86d2{font-size:16px;font-family:"Muli", Helvetica, Arial, sans-serif;font-weight:600;color:#004e95;}
+._a93bbd6b{font-size:16px;font-family:"Muli", Helvetica, Arial, sans-serif;font-weight:600;color:#707070;}
+._bd811e2f{font-weight:bold;align-items:center;display:flex;margin:0;font-size:30px;color:#004e95;font-family:"Muli", Helvetica, Arial, sans-serif;text-decoration:none;}
+@media only screen and (max-width: 1000px){._bd811e2f{font-size:25px;}}
+._ee282052{height:40px;width:8px;background-color:#bfbfbf;}
+._c212f653{margin-bottom:-14px;border-top:14px solid #bfbfbf;border-right:10px solid transparent;border-left:10px solid transparent;border-bottom:0;}
+._2c0547b0{margin-bottom:300px;}
+._2c0547b0  .accordion-v3>div{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;}
+._2c0547b0  .accordion-v3-header{min-width:100%;}
+._cf4d09d3{margin-left:10px;}
+._269184b0{margin-left:10px;}
+@media only screen and (max-width: 1000px){._269184b0{clip:rect(1px, 1px, 1px, 1px);position:absolute;height:1px;width:1px;overflow:hidden;margin:-1px;padding:0;border:0;}}
+._1a627dc6{margin-right:8px;flex-shrink:0;}
+._87c5f842{margin-top:32px;max-width:1000px;width:100%;margin-left:auto;margin-right:auto;}
+@media only screen and (max-width: 1000px){._87c5f842{padding:0 15px;}}
+._53ca537d{margin:10px 20px 20px 20px;width:100%;}
+@media only screen and (max-width: 1000px){._53ca537d{margin-top:0;}}
+._75fb1d7e{max-width:1000px;width:100%;margin-left:auto;margin-right:auto;align-items:center;display:flex;padding-top:30px;padding-bottom:20px;}
+@media only screen and (max-width: 1000px){._75fb1d7e{padding:20px 15px !important;flex-direction:column;}}
+@media screen and (max-width: calc(1000px - (15px + 15px))){._75fb1d7e{padding-left:15px;padding-right:15px;}}
+._77b155bd{max-width:1000px;width:100%;margin-left:auto;margin-right:auto;}
+@media only screen and (min-width: 500px) and (max-width: 1000px){._77b155bd{padding:0 15px;}}
+._f36c1748{overflow:hidden;overflow-wrap:break-word;padding:2px 0;display:flex;align-items:center;}
+._571aced5{padding:20px;border-radius:8px;background-color:#f5f5f5;margin:20px 0;padding:40px 0;background-color:#eef9ff;}
+@media only screen and (max-width: 500px){._571aced5{border-radius:0;}}
+._6803d160{padding:20px;border-radius:8px;background-color:#f5f5f5;margin:20px 0;padding:40px 0;background-color:#f5f5f5;}
+@media only screen and (max-width: 500px){._6803d160{border-radius:0;}}
+._15bf0940{position:absolute;box-sizing:border-box;display:none;}
+@media only screen and (max-width: 500px){._15bf0940{right:140px;top:calc(-8px - 2px);}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._15bf0940{right:140px;top:calc(-8px - 2px);}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._15bf0940{right:140px;top:calc(-8px - 2px);}}
+@media only screen and (min-width: 1000px){._15bf0940{left:50%;top:calc(-8px - 2px);}}
+._92407261{position:absolute;}
+@media only screen and (max-width: 500px){._92407261{top:100%;left:0;right:0;height:11px;}}
+@media only screen and (min-width: 500px) and (max-width: 750px){._92407261{top:100%;left:0;right:0;height:11px;}}
+@media only screen and (min-width: 750px) and (max-width: 1000px){._92407261{top:100%;left:0;right:0;height:11px;}}
+@media only screen and (min-width: 1000px){._92407261{top:100%;left:0;right:0;height:11px;}}
+._fb9bf542{transition:background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s;text-decoration:none;color:#0A64FF;margin:0;text-align:center;border-width:0;padding:0;background-color:transparent;display:inline-block;box-sizing:border-box;width:20px;height:20px;}
+._fb9bf542:visited{color:#0A64FF;}
+._fb9bf542:hover{text-decoration:none;color:#004cc9;cursor:pointer;}
+._fb9bf542:focus-visible{box-shadow:0 0 0 3px rgba(255,255,255,1),0 0 0 6px rgba(231,13,79,1);outline:2px solid transparent;border-radius:4px;}
+._a318e76a{width:100%;height:100%;color:#00a39b;flex-shrink:0;display:flex;max-width:20px;max-height:20px;height:100%;margin:auto;}
+._7faed0fd{width:100%;height:100%;color:#00d93e;flex-shrink:0;display:flex;max-width:20px;max-height:20px;height:100%;margin:auto;}
+._22718beb{width:100%;height:100%;color:#ffffff;flex-shrink:0;}
+._9e1b64e8{width:15px;height:15px;color:#bfbfbf;flex-shrink:0;margin-right:10px;margin-left:10px;flex-shrink:0;}
+._d4fe9306{width:15px;height:15px;flex-shrink:0;flex-shrink:0;margin-right:5px;}
+._33c4d70a{width:30px;height:30px;color:#707070;flex-shrink:0;margin-right:8px;flex-shrink:0;}
+._58cc8f95{width:31px;height:31px;flex-shrink:0;border-radius:50%;flex-shrink:0;}
+._1aa4b992{width:31px;height:31px;flex-shrink:0;flex-shrink:0;}</style></span><div class="_ea15f36f" data-nri-description="Nri-Header"><div class="_75fb1d7e"><div class="_10136cf8"><nav class="_564feab1" aria-label="breadcrumbs"><a class="_80514034" id="return-to-breadcrumb" href="file:///Users/jingwen.hu/Desktop/learn.html"><svg viewBox="0 0 25 21" fill="currentcolor" class="_1aa4b992" aria-hidden="true" role="img" focusable="false"><g fill-rule="evenodd"><path d="M4.36725,18.19925 L4.36725,18.6592 L0,18.6592 L0,18.19925 L4.36725,18.19925 Z M4.36725,17.7393 L0,17.7393 L0,3.2608 L4.36725,3.2608 L4.36725,17.7393 Z M4.36725,19.1182 L4.36725,19.34867 C4.36725,19.72952 4.057675,20.03812 3.6778,20.03812 L0.68955,20.03812 C0.3087,20.03812 9.989738e-05,19.72952 9.989738e-05,19.34867 L9.989738e-05,19.1182 L4.36725,19.1182 Z M4.36725,2.34095 L4.36725,2.8009 L0,2.8009 L0,2.34095 L4.36725,2.34095 Z M4.36725,1.88198 L0,1.88198 L0,1.6515 C0,1.27065 0.3086,0.96205 0.68945,0.96205 L3.6777,0.96205 C4.057575,0.96205 4.36715,1.27065 4.36715,1.6515 L4.36725,1.88198 Z M0.919,3.71987 L0.919,6.0187 L3.44725,6.0187 L3.44725,3.71987 L0.919,3.71987 Z M9.423,18.199375 L9.423,18.659325 L5.05675,18.659325 L5.05675,18.199375 L9.423,18.199375 Z M9.423,17.739425 L5.05675,17.739425 L5.05675,3.26092 L9.423,3.26092 L9.423,17.739425 Z M9.423,19.118325 L9.423,19.348795 C9.423,19.729645 9.1144,20.038245 8.73355,20.038245 L5.7463,20.038245 C5.36545,20.038245 5.05685,19.729645 5.05685,19.348795 L5.05685,19.118325 L9.423,19.118325 Z M9.423,2.34107 L9.423,2.80102 L5.05675,2.80102 L5.05675,2.34107 L9.423,2.34107 Z M9.423,1.8821 L5.05675,1.8821 L5.05675,1.65163 C5.05675,1.27078 5.36535,0.96218 5.7462,0.96218 L8.73345,0.96218 C9.1143,0.96218 9.4229,1.27078 9.4229,1.65163 L9.423,1.8821 Z M5.97575,3.72 L5.97575,6.01882 L8.504,6.01882 L8.504,3.72 L5.97575,3.72 Z M14.47975,18.199497 L14.47975,18.659447 L10.1125,18.659447 L10.1125,18.199497 L14.47975,18.199497 Z M14.47975,17.739547 L10.1125,17.739547 L10.1125,3.26105 L14.47975,3.26105 L14.47975,17.739547 Z M14.47975,19.118447 L14.47975,19.348917 C14.47975,19.729767 14.17115,20.038367 13.7903,20.038367 L10.80205,20.038367 C10.4212,20.038367 10.1126,19.729767 10.1126,19.348917 L10.1126,19.118447 L14.47975,19.118447 Z M14.47975,2.3412 L14.47975,2.80115 L10.1125,2.80115 L10.1125,2.3412 L14.47975,2.3412 Z M14.47975,1.88222 L10.1125,1.88222 L10.1125,1.65175 C10.1125,1.2709 10.4211,0.9623 10.80195,0.9623 L13.7902,0.9623 C14.17105,0.9623 14.47965,1.2709 14.47965,1.65175 L14.47975,1.88222 Z M11.0325,3.72012 L11.0325,6.01895 L13.55975,6.01895 L13.55975,3.72012 L11.0325,3.72012 Z M24.56575,16.988622 L24.72298,17.420272 L20.61948,18.914422 L20.46225,18.481797 L24.56575,16.988622 Z M24.40852,16.556972 L20.30502,18.050147 L15.35277,4.44365 L19.45627,2.95047 L24.40852,16.556972 Z M24.8802,17.852872 L24.95832,18.068692 C25.08918,18.426117 24.90461,18.821617 24.54622,18.952492 L21.73872,19.973967 C21.3813,20.10385 20.9858,19.91928 20.85492,19.561867 L20.7768,19.346047 L24.8802,17.852872 Z M19.14195,2.08637 L19.29918,2.519 L15.19568,4.01217 L15.03845,3.58052 L19.14195,2.08637 Z M18.98472,1.65472 L14.88122,3.1479 L14.80212,2.93208 C14.67224,2.57465 14.85681,2.17915 15.21422,2.04828 L18.02172,1.0268 C18.38012,0.89692 18.77562,1.08149 18.90552,1.4389 L18.98472,1.65472 Z M16.37347,4.56197 L17.1596,6.72115 L19.53557,5.8569 L18.74945,3.69675 L16.37347,4.56197 Z"></path></g></svg><span class="_269184b0">Learn</span></a><svg viewBox="0 5 25 15" fill="currentcolor" class="_9e1b64e8" aria-hidden="true" role="img" focusable="false"><path transform="rotate(180) translate(-25, -25)" fill-rule="evenodd" d="M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z"></path></svg><h1 aria-current="page" tabindex="-1" id="current-pathway" class="_bd811e2f"><svg viewBox="0 0 42 42" fill="currentcolor" class="_58cc8f95" role="img" focusable="false"><title>0%</title><circle stroke="rgba(191,191,191,1)" cx="21" cy="21" r="15.915494309189533" fill="none" stroke-width="25"></circle><circle stroke="rgba(191,191,191,1)" stroke-dasharray="0 100" stroke-dashoffset="25" cx="21" cy="21" r="15.915494309189533" fill="none" stroke-width="25"></circle><circle cx="21" cy="21" r="6.5" fill="rgba(245,245,245,1)"></circle></svg><span class="_cf4d09d3">Body Paragraphs: Transition Words and Phrases</span></h1></nav></div></div></div><div></div><aside class="Nri-Mastery-Description-Container  _87c5f842" aria-labelledby="Nri-Mastery-Description-MasteryDescriptionHeader"><h2 class="_5f1561af" id="Nri-Mastery-Description-MasteryDescriptionHeader">What is mastery?</h2><p class="Nri-Mastery-Description-MasteryDescription _e100581f">To master a topic, you must demonstrate full understanding of that topic. Mastery is not about answering a set number of questions or spending a
+            certain number of minutes on NoRedInk. Instead, mastery-based practice
+            builds a tailored set of questions to meet your needs.</p></aside><div class="_77b155bd"><div data-nri-description="node-group" class="_571aced5"><h2 class="_d2debf8c"><strong>Part 1: </strong>Evaluating the Use of Transition Words and Phrases</h2><div data-nri-description="node" class="_f90e8546"><section class="accordion-entry-topic unlocked _48bc2a49" id="accordion-header-id_nodegroup-0-node-0-topic-1141-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-0-node-0-topic-1141-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-0-node-0-topic-1141-expander-button" class="_31ee30f5"><div class="_1a627dc6"><div class="_e97297e4"><div class="_40798372"><svg viewBox="0 0 400 400" fill="currentcolor" class="_22718beb" role="img" focusable="false"><title>Starting Off</title><path d="M91.6,147.8l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7 l-28,14.7l5.4-31.2l1-5.7l-4.2-4l-22.8-22.1l31.4-4.6l5.7-0.8l2.6-5.2L91.6,147.8 M91.5,128.1c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 l-43.8,6.4c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C95.1,130,93.6,128,91.5,128.1L91.5,128.1z"></path><path d="M308.4,147.8l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7 l-28,14.7l5.4-31.2l1-5.7l-4.1-4l-22.7-22.1l31.4-4.6l5.7-0.8l2.6-5.2L308.4,147.8 M308.4,128.1c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 l-43.8,6.4c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C311.9,130,310.4,128,308.4,128.1L308.4,128.1z"></path><path d="M200.6,264.9l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6L231.6,326l-4.1,4l1,5.7l5.3,31.3l-28.1-14.8l-5.1-2.7l-5.1,2.7 L167.4,367l5.4-31.2l1-5.7l-4.1-4L146.9,304l31.4-4.6l5.7-0.8l2.6-5.2L200.6,264.9 M200.6,245.2c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 l-43.8,6.3c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C204.1,247.1,202.6,245.2,200.6,245.2L200.6,245.2z"></path><path d="M200.1,27.1l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7 L167,129.1l5.4-31.2l1-5.7l-4.2-4l-22.8-22.1l31.4-4.6l5.7-0.8l2.6-5.2L200.1,27.1 M200.1,7.3c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 L132.5,57c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2L161.5,96l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8L238.8,96l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4L224,50.6l-19.6-39.7C203.6,9.3,202.2,7.3,200.1,7.3L200.1,7.3z"></path></svg></div></div></div><span data-nri-description="name-and-description" class="_fd567d89"><span class="_4edc86d2">Identifying the Relationships Between&nbsp;Ideas</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"><div data-nri-description="Nri-Ui-Tooltip-V2" class="_9e4ee534"><div class="_324310c2"><button class="Nri-Ui-Clickable-Svg-V1__button custom-focus-ring _fb9bf542" aria-label="Previously mastered" aria-expanded="false" aria-controls="accordion-header-id_nodegroup-0-node-0-topic-1141__previously-mastered" type="button" id="accordion-header-id_nodegroup-0-node-0-topic-1141__previously-mastered__trigger"><svg viewBox="0 0 25 24" fill="currentcolor" class="_7faed0fd" aria-hidden="true" role="img" focusable="false"><path d="M13.396.554l3.121 6.259a1 1 0 0 0 .744.542l6.89 1.054a1 1 0 0 1 .554 1.698l-4.966 4.937a1 1 0 0 0-.282.87l1.132 6.924a1 1 0 0 1-1.448 1.049l-6.18-3.216a1 1 0 0 0-.923 0L5.86 23.887a1 1 0 0 1-1.448-1.049l1.132-6.924a1 1 0 0 0-.282-.87L.295 10.107A1 1 0 0 1 .849 8.41l6.89-1.054a1 1 0 0 0 .744-.542l3.123-6.26a1 1 0 0 1 1.79.001z" fill="currentcolor"></path></svg></button></div><div class="_15bf0940" data-tooltip-visible="false" aria-hidden="false"><div class="_dbd5391d dont-disable-animation" role="tooltip" id="accordion-header-id_nodegroup-0-node-0-topic-1141__previously-mastered">You mastered this skill in a previous year!<div data-nri-description="tooltip-hover-bridge" class="_92407261"></div></div></div></div><div data-nri-description="Nri-Ui-Tooltip-V2" class="_9e4ee534"><div class="_324310c2"><button class="Nri-Ui-Clickable-Svg-V1__button custom-focus-ring _fb9bf542" aria-label="Reviewed topic" aria-expanded="false" aria-controls="accordion-header-id_nodegroup-0-node-0-topic-1141__reviewed-topic" type="button" id="accordion-header-id_nodegroup-0-node-0-topic-1141__reviewed-topic__trigger"><svg viewBox="0 0 90 100" fill="currentcolor" class="_a318e76a" aria-hidden="true" role="img" focusable="false"><path d="M45,-3.29659982e-05 C54.112,-3.29659982e-05 63.228,2.12 71.52,6.372 L89.56,15.604 C89.8329058,15.7414908 90.0036473,16.0224382 90.0000573,16.328 L90.0000573,53.448 C90.0000573,67.168 82.56,79.728 70.572,86.248 L45.388,99.904 C45.1425223,100.032742 44.8494777,100.032742 44.604,99.904 L19.428,86.252 C7.4275883,79.7081557 -0.0282281283,67.120613 -7.98723275e-05,53.452 L-7.98723275e-05,16.332 C-7.98723275e-05,16.016 0.172,15.736 0.452,15.592 L18.48,6.372 C26.689367,2.17432619 35.7796922,-0.00981983277 45,-3.29659982e-05 Z M45.4440056,17.5137615 C44.9483643,17.2701262 44.3490622,17.4744174 44.1054269,17.9700587 L44.1054269,17.9700587 L36.5945232,33.2499235 C36.450613,33.5426885 36.172946,33.7468542 35.8505893,33.7969308 L35.8505893,33.7969308 L19.2709994,36.3724906 C19.0628617,36.4048238 18.8702484,36.5020537 18.7206297,36.6503135 C18.328328,37.0390522 18.3254396,37.6722106 18.7141783,38.0645124 L18.7141783,38.0645124 L30.6707511,50.130675 C30.8955874,50.3575721 30.9984998,50.6782274 30.947698,50.9935889 L30.947698,50.9935889 L28.2224001,67.9113856 C28.187866,68.1257625 28.2240485,68.3455551 28.32548,68.5375492 C28.5834652,69.0258751 29.1884698,69.2126031 29.6767956,68.954618 L29.6767956,68.954618 L44.532691,61.1061695 C44.8249661,60.951759 45.1746627,60.951759 45.4669378,61.1061695 L45.4669378,61.1061695 L60.3228332,68.954618 C60.5148273,69.0560495 60.7346199,69.092232 60.9489968,69.0576979 C61.4942521,68.9698624 61.8650642,68.4566409 61.7772287,67.9113856 L61.7772287,67.9113856 L59.0519307,50.9935889 C59.001129,50.6782274 59.1040413,50.3575721 59.3288777,50.130675 L59.3288777,50.130675 L71.2854505,38.0645124 C71.4337102,37.9148937 71.5309402,37.7222803 71.5632733,37.5141427 C71.6480513,36.9684036 71.2743685,36.4572686 70.7286294,36.3724906 L70.7286294,36.3724906 L54.1492354,33.7969613 C53.8267697,33.7468678 53.5490314,33.5425827 53.4051639,33.2496738 L53.4051639,33.2496738 L45.9004405,17.9703388 C45.8029585,17.7718691 45.6424449,17.6113054 45.4440056,17.5137615 Z" fill-rule="evenodd"></path></svg></button></div><div class="_15bf0940" data-tooltip-visible="false" aria-hidden="false"><div class="_dbd5391d dont-disable-animation" role="tooltip" id="accordion-header-id_nodegroup-0-node-0-topic-1141__reviewed-topic">You completed a recommended mastery review on this topic. Way to go!<div data-nri-description="tooltip-hover-bridge" class="_92407261"></div></div></div></div></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-0-node-0-topic-1141-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Identifying the Relationships Between Ideas" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-0-node-0-topic-1141-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><form method="post" action="https://www.noredink.com/learn/practice?practice_mode=2&amp;root_topic_id=1139&amp;topic_id=1141" accept-charset="UTF-8"><input name="utf8" type="hidden" value="✓"><input name="_method" type="hidden" value="post"><input name="authenticity_token" type="hidden" value="BOZW7/xbAvpLVGS3puVY/2/WFrU/DQ6gca3RXSh2kNNiDWW5CdAOh2Ye1FYavup7Ijx18bCzVyLHh84Dcaem6w=="><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Identifying the Relationships Between Ideas" class="_60f00b06 custom-focus-ring" type="submit" id="accordion-header-id_nodegroup-0-node-0-topic-1141-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button></form><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Identifying the Relationships Between Ideas" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-0-topic-1141-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Identifying the Relationships Between Ideas" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-0-topic-1141-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div><div data-nri-description="hub-arrow" class="_8a9bf9ab"><div class="_ee282052"></div><span class="_c212f653"></span></div><div data-nri-description="node" class="_9e79a51"><section class="accordion-entry-topic locked _4261c0b4" id="accordion-header-id_nodegroup-0-node-1-topic-1142-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-0-node-1-topic-1142-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-0-node-1-topic-1142-expander-button" class="_31ee30f5"><svg viewBox="0 0 18 24" fill="currentcolor" class="_33c4d70a" role="img" focusable="false"><title>Locked</title><path d="M15.17 10.292V6.147C15.17 2.757 12.402 0 9 0 5.597 0 2.83 2.758 2.83 6.147v4.145h-.882A1.944 1.944 0 0 0 0 12.232v9.828C0 23.132.872 24 1.948 24h14.105A1.943 1.943 0 0 0 18 22.06v-9.828c0-1.072-.872-1.94-1.947-1.94h-.883zm-5.574 7.463v2.305a.595.595 0 0 1-1.192 0v-2.305a1.744 1.744 0 0 1-1.156-1.639A1.75 1.75 0 0 1 9 14.371a1.75 1.75 0 0 1 1.752 1.745c0 .756-.483 1.397-1.156 1.64zm3.238-7.463H5.166V6.147c0-2.106 1.72-3.82 3.834-3.82s3.834 1.714 3.834 3.82v4.145z" fill-rule="evenodd"></path></svg><span data-nri-description="name-and-description" class="_fd567d89"><span class="_a93bbd6b">Identifying the Functions of&nbsp;Transitions</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-0-node-1-topic-1142-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Identifying the Functions of Transitions" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-0-node-1-topic-1142-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Identifying the Functions of Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-1-topic-1142-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Identifying the Functions of Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-1-topic-1142-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Identifying the Functions of Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-1-topic-1142-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div><div data-nri-description="hub-arrow" class="_8a9bf9ab"><div class="_ee282052"></div><span class="_c212f653"></span></div><div data-nri-description="node" class="_f90e8546"><section class="accordion-entry-topic unlocked _48bc2a49" id="accordion-header-id_nodegroup-0-node-2-topic-1143-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-0-node-2-topic-1143-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-0-node-2-topic-1143-expander-button" class="_31ee30f5"><div class="_1a627dc6"><div class="_e97297e4"><div class="_40798372"><svg viewBox="0 0 400 400" fill="currentcolor" class="_22718beb" role="img" focusable="false"><title>Starting Off</title><path d="M91.6,147.8l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7 l-28,14.7l5.4-31.2l1-5.7l-4.2-4l-22.8-22.1l31.4-4.6l5.7-0.8l2.6-5.2L91.6,147.8 M91.5,128.1c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 l-43.8,6.4c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C95.1,130,93.6,128,91.5,128.1L91.5,128.1z"></path><path d="M308.4,147.8l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7 l-28,14.7l5.4-31.2l1-5.7l-4.1-4l-22.7-22.1l31.4-4.6l5.7-0.8l2.6-5.2L308.4,147.8 M308.4,128.1c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 l-43.8,6.4c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C311.9,130,310.4,128,308.4,128.1L308.4,128.1z"></path><path d="M200.6,264.9l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6L231.6,326l-4.1,4l1,5.7l5.3,31.3l-28.1-14.8l-5.1-2.7l-5.1,2.7 L167.4,367l5.4-31.2l1-5.7l-4.1-4L146.9,304l31.4-4.6l5.7-0.8l2.6-5.2L200.6,264.9 M200.6,245.2c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 l-43.8,6.3c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3,2.2,4.2l31.8,30.9l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8l-7.5-43.6l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4l-43.8-6.4l-19.6-39.7C204.1,247.1,202.6,245.2,200.6,245.2L200.6,245.2z"></path><path d="M200.1,27.1l14,28.4l2.6,5.2l5.7,0.8l31.3,4.6l-22.7,22.1l-4.1,4l1,5.7l5.4,31.2l-28-14.7l-5.1-2.7l-5.1,2.7 L167,129.1l5.4-31.2l1-5.7l-4.2-4l-22.8-22.1l31.4-4.6l5.7-0.8l2.6-5.2L200.1,27.1 M200.1,7.3c-2,0-3.5,1.9-4.3,3.6l-19.6,39.7 L132.5,57c-2.2,0.4-4.9,1.4-4.9,4c0,1.6,1.1,3.1,2.2,4.2L161.5,96l-7.5,43.6c-0.1,0.6-0.2,1.2-0.2,1.8c0,2.3,1.1,4.4,3.7,4.4 c1.2,0,2.4-0.4,3.5-1l39.2-20.6l39.2,20.6c1.1,0.6,2.3,1,3.5,1c2.5,0,3.6-2.1,3.6-4.4c0-0.6,0-1.2-0.1-1.8L238.8,96l31.7-30.9 c1.1-1.1,2.3-2.6,2.3-4.2c0-2.6-2.8-3.7-4.9-4L224,50.6l-19.6-39.7C203.6,9.3,202.2,7.3,200.1,7.3L200.1,7.3z"></path></svg></div></div></div><span data-nri-description="name-and-description" class="_fd567d89"><p class="_f16701d9">Checkpoint: Place out of 2 topics</p><span class="_4edc86d2">Evaluating the Use of Transition Words and&nbsp;Phrases</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-0-node-2-topic-1143-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Evaluating the Use of Transition Words and Phrases" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-0-node-2-topic-1143-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><form method="post" action="https://www.noredink.com/learn/practice?practice_mode=2&amp;root_topic_id=1139&amp;topic_id=1143" accept-charset="UTF-8"><input name="utf8" type="hidden" value="✓"><input name="_method" type="hidden" value="post"><input name="authenticity_token" type="hidden" value="BOZW7/xbAvpLVGS3puVY/2/WFrU/DQ6gca3RXSh2kNNiDWW5CdAOh2Ye1FYavup7Ijx18bCzVyLHh84Dcaem6w=="><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Evaluating the Use of Transition Words and Phrases" class="_60f00b06 custom-focus-ring" type="submit" id="accordion-header-id_nodegroup-0-node-2-topic-1143-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button></form><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Evaluating the Use of Transition Words and Phrases" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-2-topic-1143-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Evaluating the Use of Transition Words and Phrases" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-0-node-2-topic-1143-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div></div><div data-nri-description="node-group" class="_6803d160"><h2 class="_d2debf8c"><strong>Part 2: </strong>Using the Appropriate Transition Words and Phrases</h2><div data-nri-description="node" class="_9e79a51"><section class="accordion-entry-topic locked _4261c0b4" id="accordion-header-id_nodegroup-1-node-0-topic-1202-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-1-node-0-topic-1202-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-1-node-0-topic-1202-expander-button" class="_31ee30f5"><svg viewBox="0 0 18 24" fill="currentcolor" class="_33c4d70a" role="img" focusable="false"><title>Locked</title><path d="M15.17 10.292V6.147C15.17 2.757 12.402 0 9 0 5.597 0 2.83 2.758 2.83 6.147v4.145h-.882A1.944 1.944 0 0 0 0 12.232v9.828C0 23.132.872 24 1.948 24h14.105A1.943 1.943 0 0 0 18 22.06v-9.828c0-1.072-.872-1.94-1.947-1.94h-.883zm-5.574 7.463v2.305a.595.595 0 0 1-1.192 0v-2.305a1.744 1.744 0 0 1-1.156-1.639A1.75 1.75 0 0 1 9 14.371a1.75 1.75 0 0 1 1.752 1.745c0 .756-.483 1.397-1.156 1.64zm3.238-7.463H5.166V6.147c0-2.106 1.72-3.82 3.834-3.82s3.834 1.714 3.834 3.82v4.145z" fill-rule="evenodd"></path></svg><span data-nri-description="name-and-description" class="_fd567d89"><span class="_a93bbd6b">Using Conjunctions as&nbsp;Transitions</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-1-node-0-topic-1202-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Using Conjunctions as Transitions" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-1-node-0-topic-1202-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Using Conjunctions as Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-0-topic-1202-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Using Conjunctions as Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-0-topic-1202-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Using Conjunctions as Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-0-topic-1202-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div><div data-nri-description="hub-arrow" class="_8a9bf9ab"><div class="_ee282052"></div><span class="_c212f653"></span></div><div data-nri-description="node" class="_9e79a51"><section class="accordion-entry-topic locked _4261c0b4" id="accordion-header-id_nodegroup-1-node-1-topic-1203-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-1-node-1-topic-1203-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-1-node-1-topic-1203-expander-button" class="_31ee30f5"><svg viewBox="0 0 18 24" fill="currentcolor" class="_33c4d70a" role="img" focusable="false"><title>Locked</title><path d="M15.17 10.292V6.147C15.17 2.757 12.402 0 9 0 5.597 0 2.83 2.758 2.83 6.147v4.145h-.882A1.944 1.944 0 0 0 0 12.232v9.828C0 23.132.872 24 1.948 24h14.105A1.943 1.943 0 0 0 18 22.06v-9.828c0-1.072-.872-1.94-1.947-1.94h-.883zm-5.574 7.463v2.305a.595.595 0 0 1-1.192 0v-2.305a1.744 1.744 0 0 1-1.156-1.639A1.75 1.75 0 0 1 9 14.371a1.75 1.75 0 0 1 1.752 1.745c0 .756-.483 1.397-1.156 1.64zm3.238-7.463H5.166V6.147c0-2.106 1.72-3.82 3.834-3.82s3.834 1.714 3.834 3.82v4.145z" fill-rule="evenodd"></path></svg><span data-nri-description="name-and-description" class="_fd567d89"><span class="_a93bbd6b">Correcting Errors with Conjunctions as&nbsp;Transitions</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-1-node-1-topic-1203-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Correcting Errors with Conjunctions as Transitions" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-1-node-1-topic-1203-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Correcting Errors with Conjunctions as Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-1-topic-1203-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Correcting Errors with Conjunctions as Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-1-topic-1203-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Correcting Errors with Conjunctions as Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-1-topic-1203-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div><div data-nri-description="hub-arrow" class="_8a9bf9ab"><div class="_ee282052"></div><span class="_c212f653"></span></div><div data-nri-description="node" class="_9e79a51"><section class="accordion-entry-topic locked _4261c0b4" id="accordion-header-id_nodegroup-1-node-2-topic-1144-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-1-node-2-topic-1144-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-1-node-2-topic-1144-expander-button" class="_31ee30f5"><svg viewBox="0 0 18 24" fill="currentcolor" class="_33c4d70a" role="img" focusable="false"><title>Locked</title><path d="M15.17 10.292V6.147C15.17 2.757 12.402 0 9 0 5.597 0 2.83 2.758 2.83 6.147v4.145h-.882A1.944 1.944 0 0 0 0 12.232v9.828C0 23.132.872 24 1.948 24h14.105A1.943 1.943 0 0 0 18 22.06v-9.828c0-1.072-.872-1.94-1.947-1.94h-.883zm-5.574 7.463v2.305a.595.595 0 0 1-1.192 0v-2.305a1.744 1.744 0 0 1-1.156-1.639A1.75 1.75 0 0 1 9 14.371a1.75 1.75 0 0 1 1.752 1.745c0 .756-.483 1.397-1.156 1.64zm3.238-7.463H5.166V6.147c0-2.106 1.72-3.82 3.834-3.82s3.834 1.714 3.834 3.82v4.145z" fill-rule="evenodd"></path></svg><span data-nri-description="name-and-description" class="_fd567d89"><p class="_f16701d9">Checkpoint: Place out of 2 topics</p><span class="_a93bbd6b">Using the Appropriate Transition Words and&nbsp;Phrases</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-1-node-2-topic-1144-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Using the Appropriate Transition Words and Phrases" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-1-node-2-topic-1144-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Using the Appropriate Transition Words and Phrases" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-2-topic-1144-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Using the Appropriate Transition Words and Phrases" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-2-topic-1144-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Using the Appropriate Transition Words and Phrases" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-1-node-2-topic-1144-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div></div><div data-nri-description="node-group" class="_6803d160"><h2 class="_d2debf8c"><strong>Part 3</strong></h2><div data-nri-description="node" class="_9e79a51"><section class="accordion-entry-topic locked _4261c0b4" id="accordion-header-id_nodegroup-2-node-0-topic-1145-section"><h3 class="_b3ecf70f"><span data-nri-description="topic-heading" class="_5f7db77"><button aria-expanded="false" aria-controls="accordion-header-id_nodegroup-2-node-0-topic-1145-actions-panel" data-nri-description="icon-and-name-and-description-button" id="accordion-header-id_nodegroup-2-node-0-topic-1145-expander-button" class="_31ee30f5"><svg viewBox="0 0 18 24" fill="currentcolor" class="_33c4d70a" role="img" focusable="false"><title>Locked</title><path d="M15.17 10.292V6.147C15.17 2.757 12.402 0 9 0 5.597 0 2.83 2.758 2.83 6.147v4.145h-.882A1.944 1.944 0 0 0 0 12.232v9.828C0 23.132.872 24 1.948 24h14.105A1.943 1.943 0 0 0 18 22.06v-9.828c0-1.072-.872-1.94-1.947-1.94h-.883zm-5.574 7.463v2.305a.595.595 0 0 1-1.192 0v-2.305a1.744 1.744 0 0 1-1.156-1.639A1.75 1.75 0 0 1 9 14.371a1.75 1.75 0 0 1 1.752 1.745c0 .756-.483 1.397-1.156 1.64zm3.238-7.463H5.166V6.147c0-2.106 1.72-3.82 3.834-3.82s3.834 1.714 3.834 3.82v4.145z" fill-rule="evenodd"></path></svg><span data-nri-description="name-and-description" class="_fd567d89"><span class="_a93bbd6b">Review: Building a Paragraph with&nbsp;Transitions</span></span></button><span data-nri-description="topic-badges" class="_cacd86a3"></span></span></h3><div class="_afaebb60" id="accordion-header-id_nodegroup-2-node-0-topic-1145-actions-panel"><div data-nri-description="topic-actions" class="_53ca537d"><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-haspopup="true" aria-label="View lesson - Building a Paragraph with Transitions" class="_355ddce5 custom-focus-ring" type="button" id="accordion-header-id_nodegroup-2-node-0-topic-1145-action-View-lesson"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 17 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><path d="M11.5310851,18.9188911 L4.99280647,18.9188911 C4.5382651,18.9188911 4.17021008,19.2869348 4.17021008,19.7414875 C4.17021008,20.1945649 4.53825384,20.5626199 4.99280647,20.5626199 L11.5310851,20.5626199 C11.9856265,20.5626199 12.3536815,20.1945761 12.3536815,19.7414875 C12.3536815,19.2869461 11.9856378,18.9188911 11.5310851,18.9188911 Z" fill="currentcolor"></path><path d="M6.57418552,23.6143414 L6.57418552,24.0659548 C6.57418552,24.5806312 6.99062635,24.998536 7.50530277,25 L8.83525577,25 C9.34846823,24.9985338 9.7634451,24.5820952 9.76490906,24.0688828 L9.76490906,23.6333729 C10.8353279,23.5747206 11.6740279,22.6934726 11.6799213,21.6215898 L4.84397035,21.6215898 C4.84983371,22.6216259 5.58447227,23.4691464 6.57422306,23.6143038 L6.57418552,23.6143414 Z" fill="currentcolor"></path><path d="M8.25826165,0 C3.69370381,0 7.73218198e-06,3.79920237 7.73218198e-06,8.47975104 L7.73218198e-06,8.48121875 C-0.00145216848,9.5706691 0.203832815,10.6498717 0.604143787,11.6631172 C0.653997317,11.7877529 0.706786279,11.9138563 0.762506918,12.038492 L0.761039202,12.038492 C1.11881645,12.8361635 1.59831274,13.572236 2.18040648,14.2232899 L4.27867667,17.4476808 L12.243755,17.4476808 L14.3420252,14.2232899 C14.9241565,13.5722398 15.4036228,12.8361635 15.7613925,12.038492 C15.8171131,11.9153203 15.8684344,11.7906846 15.9197556,11.6631172 L15.9182917,11.6631172 C16.3200553,10.6499093 16.5238839,9.57070288 16.5238839,8.48121875 C16.5238839,3.79654096 12.8214494,0 8.25813027,0 L8.25826165,0 Z M7.88288683,3.12326492 C7.01336859,3.17605013 6.16877524,3.43265636 5.41948955,3.87401457 C3.84614352,4.80805974 3.02793902,6.50163833 2.98687301,8.85523847 L2.98687301,8.85670619 C2.97954194,9.30392775 2.61296591,9.66316146 2.16574059,9.66316146 C1.94726118,9.65876206 1.73905203,9.56931775 1.5880012,9.41095837 C1.43697289,9.25406296 1.35339193,9.04438234 1.35779133,8.82589918 C1.42231075,5.07215094 3.19359944,3.26697342 4.66870988,2.41825095 C5.65553275,1.85518871 6.76258818,1.53698347 7.89753396,1.49152558 C8.35061137,1.49152558 8.71866638,1.85956934 8.71866638,2.31265801 C8.71866638,2.76719938 8.35062263,3.1352544 7.89753396,3.1352544 L7.88288683,3.12326492 Z" fill="currentcolor"></path></g></g></svg>View lesson</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Practice - Building a Paragraph with Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-2-node-0-topic-1145-action-Practice"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 23 25" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g stroke="none" stroke-width="1" fill-rule="evenodd" fill="currentcolor"><path d="M2.89855072,24.7426357 C2.30242319,25.0857881 1.56232657,25.0857881 0.966183575,24.7426357 C0.370056039,24.4004395 0,23.7604025 0,23.0750694 L0,1.9249306 C0,1.2357264 0.370056039,0.599545034 0.966183575,0.257364281 C1.56232657,-0.0857880938 2.30242319,-0.0857880938 2.89855072,0.257364281 L21.2560386,10.8343538 C21.8521816,11.1775062 22.2222222,11.8127313 22.2222222,12.5028917 C22.2222222,13.1882249 21.8560464,13.8244062 21.2560386,14.1666024 L2.89855072,24.7426357 Z"></path></g></svg>Practice</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Quiz me - Building a Paragraph with Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-2-node-0-topic-1145-action-Quiz-me"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 50 46" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><g fill="currentcolor" fill-rule="evenodd"><path d="M14.4982462,6.96082729 C13.4489636,6.96082729 12.5824213,6.1479217 12.4861388,5.1109714 L12.4881038,4.92459792 C12.4881038,3.80040897 13.3919801,2.88638585 14.5021761,2.88638585 L47.6862288,2.88638585 C49.1756598,2.88638585 49.704231,3.98479975 49.704231,4.92459792 C49.704231,5.86241339 49.1756598,6.96082729 47.6862288,6.96082729 L14.4982462,6.96082729 Z"></path><path d="M3.62821246,8.16759261 C3.38347867,8.16759261 3.14731533,8.07246622 2.97019283,7.90095044 L0.294309819,5.31860507 C-0.0861226584,4.95203214 -0.0994544599,4.34379972 0.264313266,3.96041152 C0.626652585,3.57702331 1.2299166,3.56309066 1.61034908,3.93014403 L3.58583638,5.83603502 L8.64192208,0.309575707 C8.99902391,-0.0810190436 9.60133565,-0.105040861 9.98748176,0.254805964 C10.374104,0.615133225 10.3983869,1.2228852 10.0417612,1.61251908 L4.32813204,7.85819161 C4.15434248,8.04796396 3.91341778,8.15894476 3.65773288,8.16711218 C3.64821016,8.16759261 3.63821131,8.16759261 3.62821246,8.16759261"></path><path d="M3.62821246,20.0385604 C3.38347867,20.0385604 3.14731533,19.943434 2.97019283,19.7719182 L0.294309819,17.1895728 C-0.0861226584,16.8229999 -0.0994544599,16.2147675 0.264313266,15.8313793 C0.626652585,15.4479911 1.2299166,15.4340584 1.61034908,15.8011118 L3.58583638,17.7070028 L8.64192208,12.1805434 C8.99902391,11.7899487 9.60133565,11.7659269 9.98748176,12.1257737 C10.374104,12.486101 10.3983869,13.0938529 10.0417612,13.4834868 L4.32813204,19.7291593 C4.15434248,19.9189317 3.91341778,20.0299125 3.65773288,20.0380799 C3.64821016,20.0385604 3.63821131,20.0385604 3.62821246,20.0385604"></path><path d="M3.62821246,44.6876696 C3.38347867,44.6876696 3.14731533,44.5925432 2.97019283,44.4210274 L0.294309819,41.838682 C-0.0861226584,41.4721091 -0.0994544599,40.8638767 0.264313266,40.4804885 C0.626652585,40.0971003 1.2299166,40.0831676 1.61034908,40.450221 L3.58583638,42.356112 L8.64192208,36.8296527 C8.99902391,36.4390579 9.60133565,36.4150361 9.98748176,36.7748829 C10.374104,37.1352102 10.3983869,37.7429622 10.0417612,38.132596 L4.32813204,44.3782686 C4.15434248,44.5680409 3.91341778,44.6790217 3.65773288,44.6871891 C3.64821016,44.6876696 3.63821131,44.6876696 3.62821246,44.6876696"></path><path d="M1.44800241,26.6191349 C0.987920766,26.1548977 0.987920766,25.4678266 1.44800241,25.0035894 C1.90808405,24.5393522 2.58900489,24.5393522 3.04908653,25.0035894 L5.11025229,27.0833722 L7.17141806,25.0035894 C7.6314997,24.5393522 8.39523523,24.5393522 8.84611524,25.0035894 C9.30619688,25.4678266 9.30619688,26.2384604 8.84611524,26.6934129 L6.78494947,28.7731956 L8.84611524,30.8529784 C9.30619688,31.3172156 9.30619688,32.0042867 8.84611524,32.4685239 C8.38603359,32.9327611 7.70511276,32.9327611 7.24503112,32.4685239 L5.18386536,30.3887412 L3.12269959,32.4685239 C2.66261795,32.9327611 1.89888242,32.9327611 1.44800241,32.4685239 C0.987920766,32.0042867 0.987920766,31.2336529 1.44800241,30.7787004 L3.50916817,28.7731956 L1.44800241,26.6191349 Z"></path><path d="M14.4982462,18.8670523 C13.4489636,18.8670523 12.5824213,18.0561294 12.4861388,17.0191791 L12.4881038,16.8328057 C12.4881038,15.7086167 13.3919801,14.7926109 14.5021761,14.7926109 L47.6862288,14.7926109 C49.1756598,14.7926109 49.704231,15.8910248 49.704231,16.8328057 C49.704231,17.7706211 49.1756598,18.8670523 47.6862288,18.8670523 L14.4982462,18.8670523 Z"></path><path d="M14.4982462,42.6795024 C13.3880502,42.6795024 12.480244,41.7654793 12.478279,40.6393077 C12.478279,39.5210668 13.3821554,38.605061 14.4923514,38.605061 L47.6862288,38.605061 C49.1756598,38.605061 49.704231,39.7034749 49.704231,40.6452558 C49.704231,41.5830712 49.1756598,42.6795024 47.6862288,42.6795024 L14.4982462,42.6795024 Z"></path><path d="M14.4982462,30.7732774 C13.3880502,30.7732774 12.480244,29.8572716 12.478279,28.7330826 C12.478279,27.6128591 13.3821554,26.6988359 14.4923514,26.6988359 L47.6862288,26.6988359 C49.1756598,26.6988359 49.704231,27.7952671 49.704231,28.737048 C49.704231,29.6748635 49.1756598,30.7732774 47.6862288,30.7732774 L14.4982462,30.7732774 Z"></path></g></svg>Quiz me</span></button><button data-nri-description="Nri-Ui-Button-V10-customButton" aria-label="Review past questions - Building a Paragraph with Transitions" class="_e0ae5e95 custom-focus-ring" type="button" disabled="" id="accordion-header-id_nodegroup-2-node-0-topic-1145-action-Review-past-questions"><span data-nri-description="button-label-span" class="_f36c1748"><svg viewBox="0 0 15 15" fill="currentcolor" class="_d4fe9306" aria-hidden="true" role="img" focusable="false"><path d="M7.5,0C3.4,0,0,3.4,0,7.5S3.4,15,7.5,15S15,11.6,15,7.5S11.6,0,7.5,0L7.5,0z M7.5,13.5 c-3.3,0-6-2.7-6-6c0-3.3,2.7-6,6-6c3.3,0,6,2.7,6,6C13.5,10.8,10.8,13.5,7.5,13.5L7.5,13.5z"></path><path d="M7.4,9.3C7,9.3,6.6,8.9,6.6,8.4V4.4c0-0.5,0.3-0.9,0.8-0.9c0.4,0,0.7,0.4,0.7,0.8 c0,0,0,0,0,0V3.5c0,0,0,1,0,1v1.8c0,0.6,0,2.2,0,2.2C8.1,8.9,7.7,9.3,7.4,9.3z"></path><path d="M6.7,8.4C6.9,8,7.4,7.8,7.8,7.9l2.3,0.9c0.5,0.1,0.7,0.7,0.6,1c-0.1,0.3-0.6,0.6-1.1,0.5 L7.4,9.4C6.9,9.3,6.6,8.8,6.7,8.4z"></path></svg>Review past questions</span></button></div></div></section></div></div></div></main><div aria-live="assertive" aria-atomic="true" class="_3208298d"></div><div aria-live="polite" aria-atomic="true" class="_3208298d"></div><span style="display: none;" class="elm-css-style-wrapper"><style>*{outline:none;}
+:focus-within .checkbox-icon-container{box-shadow:none !important;}
+:focus-within .Nri-RadioButton-RadioButtonIcon{box-shadow:none !important;}
+.segmented-control-radio-element:focus-within{box-shadow:none !important;}
+:focus-within .Nri-RadioButton-RadioButtonIcon{box-shadow:none !important;}
+.nri-ui-input:focus{box-shadow:inset 0 3px 0 0 rgba(212,240,255,1);}
+.switch-track{box-shadow:none !important;}</style></span></div>
+<script src="./na_files/user-navbar-13ecf8be3eccc66c49b440fea0e66f001f334721f8088217338a24da992b89d4.js" crossorigin="anonymous"></script>
+
+<script>
+if (typeof analytics !== "undefined") {
+analytics.initialize({"Google Analytics 4":{"measurementIds":["G-F0T574CF6E"],"customEventMappings":[{"segmentEvent":"Reg Teacher Success","googleEvent":"sign_up"},{"segmentEvent":"Reg Student Success","googleEvent":"sign_up"},{"segmentEvent":"Login User","googleEvent":"login"},{"segmentEvent":"Login Submitted","googleEvent":"login"}],"userProperties":{"traits.user_id":"user_id","traits.kind":"user_kind"},"passthroughUnmappedEvents":false}});
+analytics.identify("18392302", {"email":"jingwen.hu@student.keystoneacademy.cn","created":"2019-12-12T20:00:40-05:00","username":"jingwen.hu","user_id":18392302,"school_id":null,"last_login":"2023-01-05T21:18:44-05:00","title":null,"firstName":"Jingwen","lastName":"Hu","teacher":false,"premium":true,"writing":true,"referred_by":null,"referred_by_source":null,"feature_flags":[],"lms":"Unknown","signup_flow":null,"signup_method":null,"canvas_linked":false,"sync_type":"None","is_in_email_confirmation_experiment":false,"is_email_confirmed":null,"email_confirmation_link":null,"emailable":true,"referrer_url":"","signup_page_referrer_url":null,"kind":"Student","gender":"Male","last_active":"2023-01-05T20:31:42-05:00"}, {"nameTag":false});
+analytics.page({}, {"integrations":{"Mixpanel":false,"Google Analytics 4":false}});
+
+}
+</script>
+<script src="./na_files/detect-adblock-305642ee69297ccbf052b626aea29e8707aadb9866b3141add9edfbfced22206.js" crossorigin="anonymous"></script>
+<script src="./na_files/session-timeout-2c738cb0e25fe8b302f6c4bd48ad924d51d8d2ff8f73d7b28544ba5e1c212502.js" crossorigin="anonymous"></script>
+
+<script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': 
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer', "GTM-NXBXJXJ");
+</script>
+<noscript>
+  <iframe height="0" src="//www.googletagmanager.com/ns.html?id=GTM-NXBXJXJ" style="display:none;visibility:hidden" width="0" />
+</noscript>
+
+
+
+
+<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></body></html>
